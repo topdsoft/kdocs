@@ -18,6 +18,12 @@ class User extends AppModel {
  * @var string
  */
 	public $displayField = 'username';
+
+	function beforeSave($options = array()) {
+        $this->data['User']['password'] = AuthComponent::password($this->data['User']['password']);
+        return true;
+    }
+
 /**
  * Validation rules
  *
@@ -27,16 +33,35 @@ class User extends AppModel {
 		'username' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
+				'message' => 'Please enter a username here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+			'isUnique' => array(
+				'rule' => 'isUnique',
+				'message' => 'This username is already taken',
+			),
+			'onlyAlpha' => array(
+				'rule' => '/^[a-z0-9]{3,}$/i',
+				'message' => 'The username must contain only numbers and letters with no spaces and be at least three characters long',
+			),
+		),
+		'password' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Please anter a password here',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'password' => array(
+		'password2' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
+				'message' => 'Please anter a password here',
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,

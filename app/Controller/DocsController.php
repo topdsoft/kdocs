@@ -40,19 +40,28 @@ class DocsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Doc->create();
+			$this->request->data['Doc']['user_id']=$this->Auth->user('id');
 			if ($this->Doc->save($this->request->data)) {
-				$this->Session->setFlash(__('The doc has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('Your doc has been created'));
+				$this->redirect(array('action' => 'edit',$this->Doc->getInsertId()));
 			} else {
-				$this->Session->setFlash(__('The doc could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('Your doc could not be saved. Please, try again.'));
+			}
+		} else {
+			//figure out default group
+			$ref=explode('/',$this->referer());
+			$cnt=count($ref);
+			if($cnt>4 && $ref[$cnt-3]=='Groups' && $ref[$cnt-2]=='view') {
+				//get group
+				$this->request->data['Doc']['group_id']=$ref[$cnt-1];
+//debug($ref);exit;
 			}
 		}
-		$users = $this->Doc->User->find('list');
-		$groups = $this->Doc->Group->find('list');
+		$ug=$this->Doc->User->GroupsUser->find('list',array('fields'=>'group_id','conditions'=>array('user_id'=>$this->Auth->user('id'))));
+//debug($ug);exit;
+		$groups = $this->Doc->Group->find('list',array('conditions'=>array('id'=>$ug)));
 		$editors = $this->Doc->Editor->find('list');
-		$uploadedfiles = $this->Doc->Uploadedfile->find('list');
-		$users = $this->Doc->User->find('list');
-		$this->set(compact('users', 'groups', 'editors', 'uploadedfiles', 'users'));
+		$this->set(compact('groups', 'editors'));
 	}
 
 /**
@@ -69,7 +78,7 @@ class DocsController extends AppController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Doc->save($this->request->data)) {
 				$this->Session->setFlash(__('The doc has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'view',$id));
 			} else {
 				$this->Session->setFlash(__('The doc could not be saved. Please, try again.'));
 			}

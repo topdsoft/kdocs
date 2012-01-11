@@ -1,31 +1,6 @@
 <div class="docs view">
-<h2><?php  echo __('Doc');?></h2>
+<h2><?php  echo $doc['Doc']['name'];?></h2>
 	<dl>
-		<dt><?php echo __('Id'); ?></dt>
-		<dd>
-			<?php echo h($doc['Doc']['id']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Name'); ?></dt>
-		<dd>
-			<?php echo h($doc['Doc']['name']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('User'); ?></dt>
-		<dd>
-			<?php echo $this->Html->link($doc['User']['username'], array('controller' => 'users', 'action' => 'view', $doc['User']['id'])); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Group'); ?></dt>
-		<dd>
-			<?php echo $this->Html->link($doc['Group']['name'], array('controller' => 'groups', 'action' => 'view', $doc['Group']['id'])); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Editor'); ?></dt>
-		<dd>
-			<?php echo $this->Html->link($doc['Editor']['name'], array('controller' => 'editors', 'action' => 'view', $doc['Editor']['id'])); ?>
-			&nbsp;
-		</dd>
 		<dt><?php echo __('Created'); ?></dt>
 		<dd>
 			<?php echo h($doc['Doc']['created']); ?>
@@ -36,40 +11,41 @@
 			<?php echo h($doc['Doc']['modified']); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('By'); ?></dt>
+		<dd>
+			<?php echo $doc['User']['username']; ?>
+			&nbsp;
+		</dd>
+		<dt><?php echo __('Group'); ?></dt>
+		<dd>
+			<?php echo $this->Html->link($doc['Group']['name'], array('controller' => 'groups', 'action' => 'view', $doc['Group']['id'])); ?>
+			&nbsp;
+		</dd>
+		<dt><?php echo __('Editor'); ?></dt>
+		<dd>
+			<?php echo $doc['Editor']['name']; ?>
+			&nbsp;
+		</dd>
 		<dt><?php echo __('Priority'); ?></dt>
 		<dd>
 			<?php echo h($doc['Doc']['priority']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Text'); ?></dt>
-		<dd>
-			<?php echo h($doc['Doc']['text']); ?>
-			&nbsp;
-		</dd>
 	</dl>
+	<br><br>
+	<?php echo $doc['Doc']['text'];?>
 </div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+<?php echo $this->element('menu');?>
+	<h3><?php echo __('Doc Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('Edit Doc'), array('action' => 'edit', $doc['Doc']['id'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Delete Doc'), array('action' => 'delete', $doc['Doc']['id']), null, __('Are you sure you want to delete # %s?', $doc['Doc']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(__('List Docs'), array('action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Doc'), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Groups'), array('controller' => 'groups', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Group'), array('controller' => 'groups', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Editors'), array('controller' => 'editors', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Editor'), array('controller' => 'editors', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Comments'), array('controller' => 'comments', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Comment'), array('controller' => 'comments', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Uploadedfiles'), array('controller' => 'uploadedfiles', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Uploadedfile'), array('controller' => 'uploadedfiles', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Comment'), array('controller' => 'comments', 'action' => 'add'));?> </li>
 	</ul>
 </div>
+<?php //debug($doc);?>
 <div class="related">
-	<h3><?php echo __('Related Comments');?></h3>
 	<?php if (!empty($doc['Comment'])):?>
+	<h3><?php echo __('Comments');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
@@ -98,15 +74,10 @@
 	</table>
 <?php endif; ?>
 
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New Comment'), array('controller' => 'comments', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>
 <div class="related">
-	<h3><?php echo __('Related Uploadedfiles');?></h3>
 	<?php if (!empty($doc['Uploadedfile'])):?>
+	<h3><?php echo __('Related Uploadedfiles');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
@@ -135,15 +106,10 @@
 	</table>
 <?php endif; ?>
 
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New Uploadedfile'), array('controller' => 'uploadedfiles', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>
 <div class="related">
+	<?php if (false):?>
 	<h3><?php echo __('Related Users');?></h3>
-	<?php if (!empty($doc['User'])):?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
@@ -174,9 +140,4 @@
 	</table>
 <?php endif; ?>
 
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>

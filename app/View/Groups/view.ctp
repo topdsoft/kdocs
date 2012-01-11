@@ -1,134 +1,112 @@
+<?php echo $this->element('menu');?>
+<?php if($isadmin):?>
+	<h3><?php echo __('Group Actions'); ?></h3>
+	<ul>
+		<li><?php echo $this->Html->link(__('Invite New Member'), array('controller' => 'invites', 'action' => 'add',$group['Group']['id'])); ?> </li>
+		<li><?php if($isowner) echo $this->Html->link(__('Edit Group'), array('action' => 'edit', $group['Group']['id'])); ?> </li>
+		<li><?php if($isowner) echo $this->Form->postLink(__('Delete Group'), array('action' => 'delete', $group['Group']['id']), null, __('Are you sure you want to delete # %s?', $group['Group']['id'])); ?> </li>
+	</ul>
+<?php endif;?>
+</div>
 <div class="groups view">
-<h2><?php  echo __('Group');?></h2>
+<h2><?php  echo $group['Group']['name'];?></h2>
 	<dl>
-		<dt><?php echo __('Id'); ?></dt>
+		<dt><?php echo __('Description'); ?></dt>
 		<dd>
-			<?php echo h($group['Group']['id']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Name'); ?></dt>
-		<dd>
-			<?php echo h($group['Group']['name']); ?>
+			<?php echo nl2br($group['Group']['description']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Owner'); ?></dt>
 		<dd>
-			<?php echo $this->Html->link($group['Owner']['username'], array('controller' => 'users', 'action' => 'view', $group['Owner']['id'])); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Description'); ?></dt>
-		<dd>
-			<?php echo h($group['Group']['description']); ?>
+			<?php echo $group['Owner']['username']; ?>
 			&nbsp;
 		</dd>
 	</dl>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('Edit Group'), array('action' => 'edit', $group['Group']['id'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Delete Group'), array('action' => 'delete', $group['Group']['id']), null, __('Are you sure you want to delete # %s?', $group['Group']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(__('List Groups'), array('action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Group'), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Owner'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Docs'), array('controller' => 'docs', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Doc'), array('controller' => 'docs', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Invites'), array('controller' => 'invites', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Invite'), array('controller' => 'invites', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Uploadedfiles'), array('controller' => 'uploadedfiles', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Uploadedfile'), array('controller' => 'uploadedfiles', 'action' => 'add')); ?> </li>
-	</ul>
-</div>
 <div class="related">
-	<h3><?php echo __('Related Docs');?></h3>
 	<?php if (!empty($group['Doc'])):?>
+	<h3><?php echo __('Group Docs');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php echo __('Id'); ?></th>
 		<th><?php echo __('Name'); ?></th>
-		<th><?php echo __('User Id'); ?></th>
-		<th><?php echo __('Group Id'); ?></th>
-		<th><?php echo __('Editor Id'); ?></th>
+		<th><?php echo __('Creator'); ?></th>
+		<th><?php echo __('Policy'); ?></th>
 		<th><?php echo __('Created'); ?></th>
 		<th><?php echo __('Modified'); ?></th>
 		<th><?php echo __('Priority'); ?></th>
-		<th><?php echo __('Text'); ?></th>
-		<th class="actions"><?php echo __('Actions');?></th>
+		<th class="actions"></th>
 	</tr>
 	<?php
-		$i = 0;
+		$i = 0;//debug($group['Doc']);
 		foreach ($group['Doc'] as $doc): ?>
 		<tr>
-			<td><?php echo $doc['id'];?></td>
 			<td><?php echo $doc['name'];?></td>
-			<td><?php echo $doc['user_id'];?></td>
-			<td><?php echo $doc['group_id'];?></td>
-			<td><?php echo $doc['editor_id'];?></td>
+			<td><?php echo $users[$doc['user_id']];?></td>
+			<td><?php echo $editors[$doc['editor_id']];?></td>
 			<td><?php echo $doc['created'];?></td>
 			<td><?php echo $doc['modified'];?></td>
 			<td><?php echo $doc['priority'];?></td>
-			<td><?php echo $doc['text'];?></td>
+			<?php
+				$canedit=false;
+				if($doc['editor_id']==3) $canedit=true;
+				if($doc['editor_id']==2 && $isadmin) $canedit=true;
+				if($doc['editor_id']==1 && $doc['user_id']==$this->Session->read('Auth.User.id')) $canedit=true;
+			?>
 			<td class="actions">
 				<?php echo $this->Html->link(__('View'), array('controller' => 'docs', 'action' => 'view', $doc['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('controller' => 'docs', 'action' => 'edit', $doc['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'docs', 'action' => 'delete', $doc['id']), null, __('Are you sure you want to delete # %s?', $doc['id'])); ?>
+				<?php if($canedit)echo $this->Html->link(__('Edit'), array('controller' => 'docs', 'action' => 'edit', $doc['id'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New Doc'), array('controller' => 'docs', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>
+
 <div class="related">
-	<h3><?php echo __('Related Invites');?></h3>
-	<?php if (!empty($group['Invite'])):?>
+	<?php if (!empty($group['User'])):?>
+	<h3><?php echo __('Group Members');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php echo __('Id'); ?></th>
-		<th><?php echo __('Group Id'); ?></th>
+		<th><?php echo __('Username'); ?></th>
+		<th><?php echo __('Role'); ?></th>
 		<th><?php echo __('Email'); ?></th>
-		<th><?php echo __('Hash'); ?></th>
-		<th><?php echo __('User Id'); ?></th>
-		<th><?php echo __('Created'); ?></th>
-		<th><?php echo __('Modified'); ?></th>
-		<th class="actions"><?php echo __('Actions');?></th>
+		<th class="actions"></th>
 	</tr>
 	<?php
 		$i = 0;
-		foreach ($group['Invite'] as $invite): ?>
+		foreach ($group['User'] as $user): ?>
 		<tr>
-			<td><?php echo $invite['id'];?></td>
-			<td><?php echo $invite['group_id'];?></td>
-			<td><?php echo $invite['email'];?></td>
-			<td><?php echo $invite['hash'];?></td>
-			<td><?php echo $invite['user_id'];?></td>
-			<td><?php echo $invite['created'];?></td>
-			<td><?php echo $invite['modified'];?></td>
+			<td><?php echo $user['username'];?></td>
+			<td><?php 
+				$admin=false;
+				$owner=($user['id']==$group['Group']['owner_id']);
+				if($owner) {echo 'Owner';$admin=true;}
+				else {
+					//find if user is admin
+					if($user['GroupsUser']['admin']) $admin=true;
+					echo $admin ? 'Admin' : 'Member';
+				}
+			?></td>
+			<td><?php echo $user['email'];?></td>
 			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('controller' => 'invites', 'action' => 'view', $invite['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('controller' => 'invites', 'action' => 'edit', $invite['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'invites', 'action' => 'delete', $invite['id']), null, __('Are you sure you want to delete # %s?', $invite['id'])); ?>
+				<?php if($isadmin && !$owner)echo $this->Form->postLink(__('Remove from Group'), 
+					array('controller' => 'users', 'action' => 'removefromgroup', $user['id'], $group['Group']['id']), null, 
+					__('Are you sure you want to remove user %s from this group?', $user['username'])); ?>
+				<?php if($isowner && !$owner && !$admin)echo $this->Form->postLink(__('Make Admin'), 
+					array('controller' => 'users', 'action' => 'makeadmin', $user['id'], $group['Group']['id']), null, 
+					__('Are you sure you want to make user %s an admin for this group?', $user['username'])); ?>
+				<?php if($isowner && !$owner && $admin)echo $this->Form->postLink(__('Remove Admin'), 
+					array('controller' => 'users', 'action' => 'removeadmin', $user['id'], $group['Group']['id']), null, 
+					__('Are you sure you want to remove admin privilege for user %s from this group?', $user['username'])); ?>
 			</td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New Invite'), array('controller' => 'invites', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>
+
 <div class="related">
-	<h3><?php echo __('Related Uploadedfiles');?></h3>
 	<?php if (!empty($group['Uploadedfile'])):?>
+	<h3><?php echo __('Group Uploaded Files');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 		<th><?php echo __('Id'); ?></th>
@@ -156,49 +134,29 @@
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New Uploadedfile'), array('controller' => 'uploadedfiles', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
 </div>
+
 <div class="related">
-	<h3><?php echo __('Related Users');?></h3>
-	<?php if (!empty($group['User'])):?>
+	<?php if (!empty($group['Invite'])):?>
+	<h3><?php echo __('Group Invites');?></h3>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
-		<th><?php echo __('Id'); ?></th>
-		<th><?php echo __('Username'); ?></th>
-		<th><?php echo __('Password'); ?></th>
-		<th><?php echo __('Created'); ?></th>
 		<th><?php echo __('Email'); ?></th>
-		<th><?php echo __('Hash'); ?></th>
-		<th class="actions"><?php echo __('Actions');?></th>
+		<th><?php echo __('Status'); ?></th>
+		<th><?php echo __('Date Invited'); ?></th>
+		<th><?php echo __('Date Accepted'); ?></th>
 	</tr>
 	<?php
 		$i = 0;
-		foreach ($group['User'] as $user): ?>
+		foreach ($group['Invite'] as $invite): ?>
 		<tr>
-			<td><?php echo $user['id'];?></td>
-			<td><?php echo $user['username'];?></td>
-			<td><?php echo $user['password'];?></td>
-			<td><?php echo $user['created'];?></td>
-			<td><?php echo $user['email'];?></td>
-			<td><?php echo $user['hash'];?></td>
-			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('controller' => 'users', 'action' => 'view', $user['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('controller' => 'users', 'action' => 'edit', $user['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'users', 'action' => 'delete', $user['id']), null, __('Are you sure you want to delete # %s?', $user['id'])); ?>
-			</td>
+			<td><?php echo $invite['email'];?></td>
+			<td><?php echo empty($invite['user_id']) ? 'Pending' : 'Accepted';?></td>
+			<td><?php echo $invite['created'];?></td>
+			<td><?php if(!empty($invite['user_id'])) echo $invite['modified'];?></td>
 		</tr>
 	<?php endforeach; ?>
 	</table>
 <?php endif; ?>
-
-	<div class="actions">
-		<ul>
-			<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add'));?> </li>
-		</ul>
-	</div>
+</div>
 </div>
