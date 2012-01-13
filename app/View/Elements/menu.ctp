@@ -11,7 +11,7 @@
 				$docs=ClassRegistry::init('Doc')->find('all',array(
 					'conditions'=>array('Doc.group_id'=>$ug),
 					'limit'=>5,
-					'order'=>'Doc.modified desc'
+					'order'=>'Doc.created desc'
 				));
 				$doclist=array();
 				foreach($docs as $d) $doclist[]=array('label'=>$d['Doc']['name'].' ('.$d['Group']['name'].')','action'=>'view','id'=>$d['Doc']['id']);

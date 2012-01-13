@@ -4,7 +4,8 @@
 	<ul>
 		<li><?php echo $this->Html->link(__('Invite New Member'), array('controller' => 'invites', 'action' => 'add',$group['Group']['id'])); ?> </li>
 		<li><?php if($isowner) echo $this->Html->link(__('Edit Group'), array('action' => 'edit', $group['Group']['id'])); ?> </li>
-		<li><?php if($isowner) echo $this->Form->postLink(__('Delete Group'), array('action' => 'delete', $group['Group']['id']), null, __('Are you sure you want to delete # %s?', $group['Group']['id'])); ?> </li>
+		<li><?php if($isowner) echo $this->Form->postLink(__('Delete Group'), array('action' => 'delete', $group['Group']['id']), null, 
+			__('Are you sure you want to delete group:# %s?', $group['Group']['name'])); ?> </li>
 	</ul>
 <?php endif;?>
 </div>
@@ -52,8 +53,8 @@
 				if($doc['Doc']['editor_id']==1 && $doc['Doc']['user_id']==$this->Session->read('Auth.User.id')) $canedit=true;
 			?>
 		<td class="actions">
-			<?php echo $this->Html->link(__('View'), array('action' => 'view', $doc['Doc']['id'])); ?>
-			<?php if($canedit)echo $this->Html->link(__('Edit'), array('action' => 'edit', $doc['Doc']['id'])); ?>
+			<?php echo $this->Html->link(__('View'), array('controller'=>'docs','action' => 'view', $doc['Doc']['id'])); ?>
+			<?php if($canedit)echo $this->Html->link(__('Edit'), array('controller'=>'docs','action' => 'edit', $doc['Doc']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
