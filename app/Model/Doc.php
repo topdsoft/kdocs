@@ -17,6 +17,7 @@ class Doc extends AppModel {
  * @var string
  */
 	public $displayField = 'name';
+	public $order = 'priority desc';
 /**
  * Validation rules
  *

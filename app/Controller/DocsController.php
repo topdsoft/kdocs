@@ -12,11 +12,11 @@ class DocsController extends AppController {
  * index method
  *
  * @return void
- */
 	public function index() {
 		$this->Doc->recursive = 0;
 		$this->set('docs', $this->paginate());
 	}
+ */
 
 /**
  * view method
@@ -29,7 +29,50 @@ class DocsController extends AppController {
 		if (!$this->Doc->exists()) {
 			throw new NotFoundException(__('Invalid doc'));
 		}
-		$this->set('doc', $this->Doc->read(null, $id));
+		$doc=$this->Doc->read(null, $id);
+		//check if user has rights to view
+		$gu=$this->Doc->Group->GroupsUser->find('first',array('conditions'=>array('group_id'=>$doc['Doc']['group_id'],'user_id'=>$this->Auth->user('id'))));
+		if (!$gu) {
+			throw new NotFoundException(__('Invalid doc'));
+		}
+//debug($gu);exit;
+		//check for comments
+		if ($this->request->is('post') && !empty($this->request->data['Doc']['comment'])) {
+			//add comments
+			$this->Doc->Comment->save(array('user_id'=>$this->Auth->user('id'),'doc_id'=>$id,'text'=>$this->request->data['Doc']['comment']));
+//debug($this->request->data);exit;
+		}
+		$this->set('doc', $doc);
+		$users=$this->Doc->User->find('list');
+		$this->set(compact('users'));
+		//find out if user can edit doc
+		$canedit=false;
+		if($doc['Doc']['editor_id']==3) $canedit=true;
+		elseif($doc['Doc']['editor_id']==2 && $gu['GroupsUser']['admin']) $canedit=true;
+		elseif($doc['Doc']['editor_id']==1 && $doc['Doc']['user_id']==$this->Auth->user('id')) $canedit=true;
+		$this->set('canedit',$canedit);
+	}
+
+/**
+ * print method
+ *
+ * @param string $id
+ * @return void
+ */
+	public function dprint($id = null) {
+		$this->Doc->id = $id;
+		if (!$this->Doc->exists()) {
+			throw new NotFoundException(__('Invalid doc'));
+		}
+		$doc=$this->Doc->read(null, $id);
+		//check if user has rights to view
+		$gu=$this->Doc->Group->GroupsUser->find('first',array('conditions'=>array('group_id'=>$doc['Doc']['group_id'],'user_id'=>$this->Auth->user('id'))));
+		if (!$gu) {
+			throw new NotFoundException(__('Invalid doc'));
+		}
+		$this->set('doc', $doc);
+		$this->layout='print';
+		$this->set('title_for_layout',$doc['Doc']['name']);
 	}
 
 /**
@@ -74,6 +117,22 @@ class DocsController extends AppController {
 		$this->Doc->id = $id;
 		if (!$this->Doc->exists()) {
 			throw new NotFoundException(__('Invalid doc'));
+		}
+		//check if user has rights to view
+		$gu=$this->Doc->Group->GroupsUser->find('first',array('conditions'=>array('group_id'=>$this->Doc->field('group_id',array('id'=>$id)),
+			'user_id'=>$this->Auth->user('id'))));
+		if (!$gu) {
+			throw new NotFoundException(__('Invalid doc'));
+		}
+		//check for edit permission
+		$canedit=false;
+		$policy=$this->Doc->field('editor_id',array('id'=>$id));
+		if($policy==3) $canedit=true;
+		elseif($policy==2 && $gu['GroupsUser']['admin']) $canedit=true;
+		elseif($policy==1 && $this->Doc->field('user_id',array('id'=>$id))==$this->Auth->user('id')) $canedit=true;
+		if(!$canedit) {
+			$this->Session->setFlash(__('Sorry, you do not have permission to edit this doc'));
+			$this->redirect(array('action' => 'view',$id));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this->Doc->save($this->request->data)) {

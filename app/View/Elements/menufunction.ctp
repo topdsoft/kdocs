@@ -44,8 +44,13 @@ function menu($obj,$controller,$contLabel,$items,$only=true) {
 		if($i['active']) $div='style="background: #ccc;"';
 		else $div='';
 		if(isset($i['label'])){
-			if(isset($i['id']))echo "<li $div>".$obj->Html->link(__($i['label']), array('controller' => $i['controller'], 'action' => $i['action'],$i['id'])).'</li>';
-			else echo "<li $div>".$obj->Html->link(__($i['label']), array('controller' => $i['controller'], 'action' => $i['action'])).'</li>';
+			if(strlen($i['label'])>30) {
+				$title=$i['label'];
+				$i['label']=substr($i['label'],0,30);
+			} else $title='';
+			if(isset($i['id']))echo "<li $div>".$obj->Html->link(__($i['label']), array('controller' => $i['controller'], 'action' => $i['action'],$i['id']),
+				array('title'=>$title)).'</li>';
+			else echo "<li $div>".$obj->Html->link(__($i['label']), array('controller' => $i['controller'], 'action' => $i['action']),array('title'=>$title)).'</li>';
 		}
 	}
 	echo '</div>';

@@ -12,18 +12,17 @@ class InvitesController extends AppController {
  * index method
  *
  * @return void
- */
 	public function index() {
 		$this->Invite->recursive = 0;
 		$this->set('invites', $this->paginate());
 	}
+ */
 
 /**
  * view method
  *
  * @param string $id
  * @return void
- */
 	public function view($id = null) {
 		$this->Invite->id = $id;
 		if (!$this->Invite->exists()) {
@@ -31,6 +30,7 @@ class InvitesController extends AppController {
 		}
 		$this->set('invite', $this->Invite->read(null, $id));
 	}
+ */
 
 /**
  * add method
@@ -42,6 +42,8 @@ class InvitesController extends AppController {
 			$this->Invite->create();
 //debug($this->request->data);exit;
 			if ($this->Invite->save($this->request->data)) {
+				//send email
+				$this->_sendNewUserMail($this->Invite->getInsertId());
 				$this->Session->setFlash(__('The Invitation has been Sent'));
 				$this->redirect(array('controller'=>'groups','action' => 'view',$this->request->data['Invite']['group_id']));
 			} else {
@@ -67,12 +69,38 @@ class InvitesController extends AppController {
 		}
 	}
 
+	function _sendNewUserMail($id) {
+		//sends email for a new user
+		App::uses('CakeEmail', 'Network/Email');
+		$invite=$this->Invite->read(null,$id);//debug($id);debug($user);
+		if ($invite) {
+			//found ok
+			$mail=new CakeEmail('smtp');
+			$mail->to($invite['Invite']['email']);
+			$mail->subject('Sign up to use kDocs');
+			$mail->replyTo($this->Auth->user('email'));
+			$mail->from($this->Auth->user('email'));
+//			$mail->from(array('kurtlakin@gmail.com'=>'My Site'));
+			$mail->template('confirm_message');
+			$mail->emailFormat('both');
+			$mail->viewVars(array('invite'=>$invite));
+			//mail options
+/*			$mail->smtpOptions(array(
+			    'port'=>'25',
+			    'timeout'=>'30',
+			    'host'=>'smtp.emailsrvr.com'
+			));//*/
+			$x=$mail->send();
+//debug($x);exit;
+		}
+	}
+
+	
 /**
  * edit method
  *
  * @param string $id
  * @return void
- */
 	public function edit($id = null) {
 		$this->Invite->id = $id;
 		if (!$this->Invite->exists()) {
@@ -92,13 +120,13 @@ class InvitesController extends AppController {
 		$users = $this->Invite->User->find('list');
 		$this->set(compact('groups', 'users'));
 	}
+ */
 
 /**
  * delete method
  *
  * @param string $id
  * @return void
- */
 	public function delete($id = null) {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
@@ -114,4 +142,5 @@ class InvitesController extends AppController {
 		$this->Session->setFlash(__('Invite was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+ */
 }

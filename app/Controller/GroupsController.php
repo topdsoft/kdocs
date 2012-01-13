@@ -12,11 +12,11 @@ class GroupsController extends AppController {
  * index method
  *
  * @return void
- */
 	public function index() {
 		$this->Group->recursive = 0;
 		$this->set('groups', $this->paginate());
 	}
+ */
 
 /**
  * view method
@@ -41,6 +41,9 @@ class GroupsController extends AppController {
 		$editors=$this->Group->Doc->Editor->find('list');
 		$editors[1]='Only Owner';
 		$this->set(compact(array('users','editors')));
+		//get docs in correct order
+		$this->paginate=array('Doc'=>array('recursive'=>-1));
+		$this->set('docs',$this->paginate('Doc',array('group_id'=>$id)));
 	}
 
 /**

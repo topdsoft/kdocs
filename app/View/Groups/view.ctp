@@ -25,39 +25,53 @@
 <div class="related">
 	<?php if (!empty($group['Doc'])):?>
 	<h3><?php echo __('Group Docs');?></h3>
-	<table cellpadding = "0" cellspacing = "0">
+	<table cellpadding="0" cellspacing="0">
 	<tr>
-		<th><?php echo __('Name'); ?></th>
-		<th><?php echo __('Creator'); ?></th>
-		<th><?php echo __('Policy'); ?></th>
-		<th><?php echo __('Created'); ?></th>
-		<th><?php echo __('Modified'); ?></th>
-		<th><?php echo __('Priority'); ?></th>
-		<th class="actions"></th>
+			<th><?php echo $this->Paginator->sort('name');?></th>
+			<th><?php echo $this->Paginator->sort('user_id','Creator');?></th>
+			<th><?php echo $this->Paginator->sort('editor_id','Edit Policy');?></th>
+			<th><?php echo $this->Paginator->sort('created');?></th>
+			<th><?php echo $this->Paginator->sort('modified');?></th>
+			<th><?php echo $this->Paginator->sort('priority');?></th>
+			<th class="actions"></th>
 	</tr>
 	<?php
-		$i = 0;//debug($group['Doc']);
-		foreach ($group['Doc'] as $doc): ?>
-		<tr>
-			<td><?php echo $doc['name'];?></td>
-			<td><?php echo $users[$doc['user_id']];?></td>
-			<td><?php echo $editors[$doc['editor_id']];?></td>
-			<td><?php echo $doc['created'];?></td>
-			<td><?php echo $doc['modified'];?></td>
-			<td><?php echo $doc['priority'];?></td>
+	$i = 0;
+	foreach ($docs as $doc): ?>
+	<tr>
+		<td><?php echo h($doc['Doc']['name']); ?>&nbsp;</td>
+		<td><?php echo $users[$doc['Doc']['user_id']]; ?></td>
+		<td><?php echo $editors[$doc['Doc']['editor_id']]; ?></td>
+		<td><?php echo h($doc['Doc']['created']); ?>&nbsp;</td>
+		<td><?php echo h($doc['Doc']['modified']); ?>&nbsp;</td>
+		<td><?php echo h($doc['Doc']['priority']); ?>&nbsp;</td>
 			<?php
 				$canedit=false;
-				if($doc['editor_id']==3) $canedit=true;
-				if($doc['editor_id']==2 && $isadmin) $canedit=true;
-				if($doc['editor_id']==1 && $doc['user_id']==$this->Session->read('Auth.User.id')) $canedit=true;
+				if($doc['Doc']['editor_id']==3) $canedit=true;
+				if($doc['Doc']['editor_id']==2 && $isadmin) $canedit=true;
+				if($doc['Doc']['editor_id']==1 && $doc['Doc']['user_id']==$this->Session->read('Auth.User.id')) $canedit=true;
 			?>
-			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('controller' => 'docs', 'action' => 'view', $doc['id'])); ?>
-				<?php if($canedit)echo $this->Html->link(__('Edit'), array('controller' => 'docs', 'action' => 'edit', $doc['id'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
+		<td class="actions">
+			<?php echo $this->Html->link(__('View'), array('action' => 'view', $doc['Doc']['id'])); ?>
+			<?php if($canedit)echo $this->Html->link(__('Edit'), array('action' => 'edit', $doc['Doc']['id'])); ?>
+		</td>
+	</tr>
+<?php endforeach; ?>
 	</table>
+	<p>
+	<?php
+	echo $this->Paginator->counter(array(
+	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+	));
+	?>	</p>
+
+	<div class="paging">
+	<?php
+		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
+		echo $this->Paginator->numbers(array('separator' => ''));
+		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
+	?>
+	</div>
 <?php endif; ?>
 </div>
 

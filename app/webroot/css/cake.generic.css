@@ -57,6 +57,7 @@ h2 {
 h3 {
 /*	background:#eee;*/
 	color: #e32;
+	border-top: 4px solid #eee;
 	border-bottom: 4px solid #eee;
 	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
 	font-size: 115%;

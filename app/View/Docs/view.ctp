@@ -1,4 +1,5 @@
 <div class="docs view">
+<?php echo $this->Form->create('Doc');?>
 <h2><?php  echo $doc['Doc']['name'];?></h2>
 	<dl>
 		<dt><?php echo __('Created'); ?></dt>
@@ -28,7 +29,7 @@
 		</dd>
 		<dt><?php echo __('Priority'); ?></dt>
 		<dd>
-			<?php echo h($doc['Doc']['priority']); ?>
+			<?php for($i=1; $i<=5; $i++) echo $this->Html->image(($doc['Doc']['priority']>=$i) ? 'on.png' : 'off.png',array('width'=>8)); ?>
 			&nbsp;
 		</dd>
 	</dl>
@@ -38,42 +39,29 @@
 <?php echo $this->element('menu');?>
 	<h3><?php echo __('Doc Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Edit Doc'), array('action' => 'edit', $doc['Doc']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(__('New Comment'), array('controller' => 'comments', 'action' => 'add'));?> </li>
+		<li><?php if($canedit)echo $this->Html->link(__('Edit Doc'), array('action' => 'edit', $doc['Doc']['id'])); ?> </li>
+		<li><?php echo $this->Html->link(__('Print Doc'), array('action' => 'dprint', $doc['Doc']['id']),array('target'=>'none')); ?> </li>
 	</ul>
 </div>
 <?php //debug($doc);?>
 <div class="related">
 	<?php if (!empty($doc['Comment'])):?>
 	<h3><?php echo __('Comments');?></h3>
-	<table cellpadding = "0" cellspacing = "0">
-	<tr>
-		<th><?php echo __('Id'); ?></th>
-		<th><?php echo __('User Id'); ?></th>
-		<th><?php echo __('Doc Id'); ?></th>
-		<th><?php echo __('Created'); ?></th>
-		<th><?php echo __('Text'); ?></th>
-		<th class="actions"><?php echo __('Actions');?></th>
-	</tr>
-	<?php
-		$i = 0;
-		foreach ($doc['Comment'] as $comment): ?>
-		<tr>
-			<td><?php echo $comment['id'];?></td>
-			<td><?php echo $comment['user_id'];?></td>
-			<td><?php echo $comment['doc_id'];?></td>
-			<td><?php echo $comment['created'];?></td>
-			<td><?php echo $comment['text'];?></td>
-			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('controller' => 'comments', 'action' => 'view', $comment['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('controller' => 'comments', 'action' => 'edit', $comment['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'comments', 'action' => 'delete', $comment['id']), null, __('Are you sure you want to delete # %s?', $comment['id'])); ?>
-			</td>
-		</tr>
-	<?php endforeach; ?>
-	</table>
+	<?php 
+		foreach ($doc['Comment'] as $comment) {
+			//loop for all comments
+			echo '<p><small>'.$comment['created'].' by <i>'.$users[$comment['user_id']].'</i></small><br>';
+			echo nl2br($comment['text']);
+			echo '</p>';
+		}
+	?>
 <?php endif; ?>
-
+<span id="leavecomment"><?php echo $this->Html->link(__('New Comment'), 'javascript:showcomments();');?></span>
+<span id="comment" style="display:none">
+<?php 
+	echo $this->Form->input('comment',array('type'=>'textarea','label'=>'Leave a comment:','id'=>'commentarea'));
+	echo $this->Form->end(__('Submit'));
+?></span>
 </div>
 <div class="related">
 	<?php if (!empty($doc['Uploadedfile'])):?>
@@ -141,3 +129,4 @@
 <?php endif; ?>
 
 </div>
+<?php echo $this->Html->script(array('jquery-1.6.4.min','comments.js'));?>
