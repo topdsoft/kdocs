@@ -7,6 +7,7 @@
 		echo "Enter the user's email address and they will be sent an invitation to the group.";
 		echo $this->Form->input('email',array('id'=>'def'));
 		echo $this->Form->input('hash',array('type'=>'hidden'));
+		echo $this->Form->input('text',array('label'=>'Greeting Message:'));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit'));?>

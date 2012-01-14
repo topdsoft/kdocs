@@ -38,6 +38,20 @@ class InvitesController extends AppController {
  * @return void
  */
 	public function add($group_id=NULL) {
+		//get group info
+		$group=$this->Invite->Group->read(null,$group_id);
+		if(!$group) {
+			//invalid group
+			$this->Session->setFlash(__('Invalid Group'));
+			$this->redirect('/');
+		}
+		$admin=$this->Invite->Group->GroupsUser->field('admin',array('group_id'=>$group_id,'user_id'=>$this->Auth->user('id')));
+		if(!$admin) {
+			//not admin for this group
+			$this->Session->setFlash(__('You are not an administrator for this group'));
+			$this->redirect('/');
+		}
+		$this->set('group',$group);
 		if ($this->request->is('post')) {
 			$this->Invite->create();
 //debug($this->request->data);exit;
@@ -50,22 +64,8 @@ class InvitesController extends AppController {
 				$this->Session->setFlash(__('The invite could not be saved. Please, try again.'));
 			}
 		} else {
-			//get group info
-			$group=$this->Invite->Group->read(null,$group_id);
-			if(!$group) {
-				//invalid group
-				$this->Session->setFlash(__('Invalid Group'));
-				$this->redirect('/');
-			}
-			$admin=$this->Invite->Group->GroupsUser->field('admin',array('group_id'=>$group_id,'user_id'=>$this->Auth->user('id')));
-			if(!$admin) {
-				//not admin for this group
-				$this->Session->setFlash(__('You are not an administrator for this group'));
-				$this->redirect('/');
-			}
 			$this->request->data['Invite']['group_id']=$group_id;
 			$this->request->data['Invite']['hash']=md5(uniqid(rand(),true));
-			$this->set('group',$group);
 		}
 	}
 
