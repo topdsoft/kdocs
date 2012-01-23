@@ -44,6 +44,8 @@ class GroupsController extends AppController {
 		//get docs in correct order
 		$this->paginate=array('Doc'=>array('recursive'=>-1));
 		$this->set('docs',$this->paginate('Doc',array('group_id'=>$id)));
+		//get list of docs that this user has viewed
+		$this->set('viewed',$this->Group->Doc->DocsUser->find('list',array('conditions'=>array('user_id'=>$this->Auth->user('id')),'fields'=>'doc_id')));
 	}
 
 /**

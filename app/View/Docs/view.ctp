@@ -32,6 +32,11 @@
 			<?php for($i=1; $i<=5; $i++) echo $this->Html->image(($doc['Doc']['priority']>=$i) ? 'on.png' : 'off.png',array('width'=>8)); ?>
 			&nbsp;
 		</dd>
+		<dt><?php echo __('Viewed By'); ?></dt>
+		<dd>
+			<?php foreach($doc['Users'] as $user) echo $user['username'].' ';?>
+			&nbsp;
+		</dd>
 	</dl>
 	<br><br>
 	<?php echo $doc['Doc']['text'];?>

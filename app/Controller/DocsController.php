@@ -51,6 +51,9 @@ class DocsController extends AppController {
 		elseif($doc['Doc']['editor_id']==2 && $gu['GroupsUser']['admin']) $canedit=true;
 		elseif($doc['Doc']['editor_id']==1 && $doc['Doc']['user_id']==$this->Auth->user('id')) $canedit=true;
 		$this->set('canedit',$canedit);
+		//track users and views
+		$du=$this->Doc->DocsUser->find('first',array('conditions'=>array('user_id'=>$this->Auth->user('id'),'doc_id'=>$id)));
+		if(!$du) $this->Doc->DocsUser->save(array('user_id'=>$this->Auth->user('id'),'doc_id'=>$id));
 	}
 
 /**

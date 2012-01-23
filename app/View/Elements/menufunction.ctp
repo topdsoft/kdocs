@@ -37,16 +37,16 @@ function menu($obj,$controller,$contLabel,$items,$only=true) {
 		} else $items[$i]['active']=false;
 	}//end foreach 
 	if ($activeController) echo '<div style="border:1px solid #ccc;">';
-	else echo '<div style="padding: 1px;">';
+	else echo '<div style="padding: 1px; overflow-x:hidden;">';
 	echo "<strong>$contLabel</strong>";
 	foreach($items as $i) {
 		//loop for all links in menu block
 		if($i['active']) $div='style="background: #ccc;"';
 		else $div='';
 		if(isset($i['label'])){
-			if(strlen($i['label'])>30) {
+			if(strlen($i['label'])>20) {
 				$title=$i['label'];
-				$i['label']=substr($i['label'],0,30);
+//				$i['label']=substr($i['label'],0,30);
 			} else $title='';
 			if(isset($i['id']))echo "<li $div>".$obj->Html->link(__($i['label']), array('controller' => $i['controller'], 'action' => $i['action'],$i['id']),
 				array('title'=>$title)).'</li>';

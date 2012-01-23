@@ -11,6 +11,8 @@
 </div>
 <div class="groups view">
 <h2><?php  echo $group['Group']['name'];?></h2>
+	<?php echo $this->Html->image('newdoc.png',array('url'=>array('controller'=>'docs','action'=>'add'),'title'=>'Click Here to Create a New Doc',
+		'style'=>'float:right')); ?>
 	<dl>
 		<dt><?php echo __('Description'); ?></dt>
 		<dd>
@@ -39,8 +41,12 @@
 	<?php
 	$i = 0;
 	foreach ($docs as $doc): ?>
-	<tr>
-		<td><?php echo h($doc['Doc']['name']); ?>&nbsp;</td>
+	<?php 
+		$new=(!in_array($doc['Doc']['id'],$viewed));
+		if($new)echo '<tr class="new">';
+		else echo '<tr>';
+	?>
+		<td><?php if($new) echo '*'; echo h($doc['Doc']['name']); ?>&nbsp;</td>
 		<td><?php echo $users[$doc['Doc']['user_id']]; ?></td>
 		<td><?php echo $editors[$doc['Doc']['editor_id']]; ?></td>
 		<td><?php echo h($doc['Doc']['created']); ?>&nbsp;</td>

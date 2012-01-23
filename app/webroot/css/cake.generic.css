@@ -149,6 +149,7 @@ div.actions {
 	float:left;
 	width:16%;
 	padding:10px 1.5%;
+/*	overflow-x:hidden;*/
 }
 div.actions h3 {
 	padding-top:0;
@@ -189,6 +190,9 @@ table tr td {
 }
 table tr:nth-child(even) {
 	background: #f9f9f9;
+}
+table tr.new {
+	font-weight:bold;
 }
 td.actions {
 	text-align: center;

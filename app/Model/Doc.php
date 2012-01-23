@@ -17,7 +17,7 @@ class Doc extends AppModel {
  * @var string
  */
 	public $displayField = 'name';
-	public $order = 'priority desc';
+	public $order = array('Doc.priority desc','Doc.created desc');
 /**
  * Validation rules
  *
@@ -130,7 +130,7 @@ class Doc extends AppModel {
 			'deleteQuery' => '',
 			'insertQuery' => ''
 		),
-		'User' => array(
+		'Users' => array(
 			'className' => 'User',
 			'joinTable' => 'docs_users',
 			'foreignKey' => 'doc_id',
