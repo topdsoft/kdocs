@@ -36,7 +36,7 @@ function menu($obj,$controller,$contLabel,$items,$only=true) {
 			}
 		} else $items[$i]['active']=false;
 	}//end foreach 
-	if ($activeController) echo '<div style="border:1px solid #ccc;">';
+	if ($activeController) echo '<div style="border:1px solid #ccc; overflow-x:hidden;">';
 	else echo '<div style="padding: 1px; overflow-x:hidden;">';
 	echo "<strong>$contLabel</strong>";
 	foreach($items as $i) {
